@@ -17,3 +17,11 @@ script:
   - python3 -m pytest -sv --cov=kickscraper --cov-fail-under=60
   - python3 -m flake8 --disable-noqa .
   - mypy kickscraper
+
+deploy:
+  provider: script
+  skip_cleanup: true
+  script: bash .travis/deploy.sh
+  on:
+    branch: main
+
