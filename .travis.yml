@@ -14,7 +14,7 @@ install:
 script:
   - |
     yapf --quiet --style "{based_on_style: pep8, blank_line_before_nested_class_or_def: true, indent_dictionary_value: true, dedent_closing_brackets: true, column_limit: 99}" --recursive .
-  - python3 -m pytest -sv --cov=kickscraper --cov-fail-under=60
+  # - python3 -m pytest -sv --cov=kickscraper --cov-fail-under=60
   - python3 -m flake8 --disable-noqa .
   - mypy kickscraper
 
