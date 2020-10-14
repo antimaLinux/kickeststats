@@ -18,8 +18,8 @@ class LineUp:
     def _valid(self) -> bool:
         """Check if the lineup is valid."""
         return (
-            self.goal_keeper + self.defenders +
-            self.midfielders + self.forwards
+            self.goal_keeper + self.defenders + self.midfielders +
+            self.forwards
         ) == 11
 
     def __post_init__(self) -> None:

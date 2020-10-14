@@ -1,5 +1,4 @@
 """Testing line-up utilities."""
-
 from ..line_up import (
     LU343, LU433, LU352, LU442, LU532, LU451, LU541
 )
