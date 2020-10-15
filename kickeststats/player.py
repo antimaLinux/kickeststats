@@ -3,13 +3,6 @@ from typing import List
 from enum import Enum, auto
 from dataclasses import dataclass
 
-# NOTE: string to set to allow multilingual support.
-PLAYER_DICTIONARY_KEYS_MAPPING = {
-    'name': {'Giocatore'},
-    'position': {'Pos'},
-    'value': {'CR'}
-}
-
 
 class Position(Enum):
     """Player position in the pitch."""
@@ -20,12 +13,25 @@ class Position(Enum):
     FORWARD = auto()
 
 
+# NOTE: string to set to allow multilingual support.
+PLAYER_DICTIONARY_KEYS_MAPPING = {
+    'name': {'Giocatore'},
+    'position': {'Pos'},
+    'value': {'CR'}
+}
+
 # NOTE: supporting multiple languages.
 POSITION_MAPPINGS = {
     'Por': Position.GOALKEEPER,
     'Dif': Position.DEFENDER,
     'Cen': Position.MIDFIELDER,
     'Att': Position.FORWARD
+}
+
+PLAYER_DICTIONARY_KEYS_FORMATTER_FN = {
+    'name': str,
+    'position': POSITION_MAPPINGS.__getitem__,
+    'value': float
 }
 
 
@@ -54,8 +60,7 @@ class Player:
             mapped_argument = next(iter(keys & player_dictionary_keys))
             mapped_value = player_dictionary[mapped_argument]
             player_init_kwargs[argument] = (
-                POSITION_MAPPINGS[mapped_value]
-                if argument == 'position' else mapped_value
+                PLAYER_DICTIONARY_KEYS_FORMATTER_FN[argument](mapped_value)
             )
         return Player(**player_init_kwargs)
 
