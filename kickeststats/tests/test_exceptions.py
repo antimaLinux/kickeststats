@@ -32,4 +32,4 @@ def test_unsupported_line_up():
 
 def test_invalid_team_line_up():
     with pytest.raises(Exception):
-        raise InvalidLineUp("An invalid team line-up error.")
+        raise InvalidTeamLineup("An invalid team line-up error.")

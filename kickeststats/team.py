@@ -41,12 +41,12 @@ class Team:
             self.line_up = LINE_UP_FACTORY[line_up]
         # validate list of players against the line-ip
         for position_name, count in self.players.groupby(
-            'position_name'
+            "position_name"
         ).size().to_dict().items():
             if getattr(self.line_up, POSITION_NAMES_TO_ATTRIBUTES[position_name]) != count:
                 raise InvalidTeamLineup(
-                    f'{count} {POSITION_NAMES_TO_ATTRIBUTES[position_name]}(s) '
-                    f'not compatible with {line_up}'
+                    f"{count} {POSITION_NAMES_TO_ATTRIBUTES[position_name]}(s) "
+                    f"not compatible with {line_up}"
                 )
 
     def points(self, players: List[Player], is_away: bool = True) -> float:
@@ -63,7 +63,7 @@ class Team:
         all_players = Player.from_list_to_df(players)
         all_players_with_points = all_players["points"] > 0.0
         # candidate players
-        players = all_players[
+        playing_players = all_players[
             all_players["_id"].isin(self.players["_id"])
         ]
         # substitutes
@@ -72,9 +72,9 @@ class Team:
         ].sort_values(by="points", ascending=False)
         if not substitutes.empty:
             # replace the worst candidate players one by one
-            candidates_for_substitution = players[players["points"] == 0.0]
-            to_be_substituted_ids = []
-            substitutes_ids = []
+            candidates_for_substitution = playing_players[playing_players["points"] == 0.0]
+            to_be_substituted_ids: List[str] = []
+            substitutes_ids: List[str] = []
             for _, player in candidates_for_substitution.iterrows():
                 substitutes_per_position = substitutes[
                     substitutes["position_name"] == player["position_name"] & ~substitutes["_id"].isin(substitutes_ids)
@@ -86,13 +86,13 @@ class Team:
                 if len(to_be_substituted_ids) == MAX_SUBSTITUTIONS:
                     break
             # get the final list
-            players = pd.concat([
-                players[~players["_id"].isin(to_be_substituted_ids)],
+            playing_players = pd.concat([
+                playing_players[~playing_players["_id"].isin(to_be_substituted_ids)],
                 substitutes[substitutes["_id"].isin(substitutes_ids)]
             ], axis=0)
         # compute the points
         points = 0.0 if is_away else 6.0
-        for _, player in players.iterrows():
+        for _, player in playing_players.iterrows():
             points += (
                 2 * player["points"] if player["captain"] else player["points"]
             )

@@ -1,9 +1,10 @@
 """Testing player utilities."""
 import pkg_resources
+from typing import Dict, Any
 from ..player import Player, POSITION_MAPPINGS
 
 
-PLAYER_EXAMPLE = {
+PLAYER_EXAMPLE: Dict[str, Any] = {
     "Giocatore": "R. Leao", "Pos": "Att", "Squadra": "MIL",
     "PTS": 0.0, "CR": 13.50
 }
