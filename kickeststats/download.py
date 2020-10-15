@@ -1,4 +1,4 @@
-from splinter import Browser
+from splinter import Browser  # type: ignore
 from splinter.driver.webdriver.chrome import WebDriver as ChromeWebDriver  # type: ignore
 from splinter.driver.webdriver import WebDriverElement  # type: ignore
 from typing import List
