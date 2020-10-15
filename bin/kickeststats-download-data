@@ -1,10 +1,16 @@
 #! /usr/bin/env python3
+"""Download data for player stats in the last game rounds in JSONL format."""
 import os
 import json
 import argparse
 from kickeststats.download import download_data
 
-parser = argparse.ArgumentParser()
+parser = argparse.ArgumentParser(
+    description=(
+        "Download data for player stats in the last game rounds in JSONL format. "
+        "It requires Chrome installed!"
+    )
+)
 parser.add_argument(
     "players_jsonl_filepath", type=str, help=("path to the .jsonl with the downloaded data.")
 )
