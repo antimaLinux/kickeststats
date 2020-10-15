@@ -1,7 +1,7 @@
 from splinter import Browser
 from splinter.driver.webdriver.chrome import WebDriver as ChromeWebDriver  # type: ignore
 from splinter.driver.webdriver import WebDriverElement  # type: ignore
-from typing import List, Iterator
+from typing import List
 import time
 
 from kickeststats.helpers.parsers import HeaderParser, RowParser, PaginationParser
