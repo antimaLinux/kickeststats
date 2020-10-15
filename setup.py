@@ -5,17 +5,17 @@ from setuptools import setup
 
 __version__ = re.search(
     r'__version__\s*=\s*[\'"]([^\'"]*)[\'"]',
-    io.open('kickscraper/__init__.py', encoding='utf_8_sig').read()
+    io.open('kickeststats/__init__.py', encoding='utf_8_sig').read()
 ).group(1)
 
 setup(
-    name='kickscraper',
+    name='kickeststats',
     version=__version__,
     author='Riccardo Vilardi, Matteo Manica',
-    packages=['kickscraper'],
+    packages=['kickeststats'],
     long_description=open('README.md').read(),
     package_data={
-        'kickscraper': [
+        'kickeststats': [
             'py.typed',
             'resources/tests/players.jsonl'
         ]
