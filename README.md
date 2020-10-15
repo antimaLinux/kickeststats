@@ -25,7 +25,7 @@ pip install -e .
 
 ## usage
 
-Download data for the last games per player in JSONL format:
+Download data for player stats in the last game rounds in JSONL format:
 
 ```console
 kickeststats-download-data /tmp/players.jsonl
