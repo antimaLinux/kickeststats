@@ -93,7 +93,7 @@ class NextPage:
 def download_data() -> List[dict]:
 
     with Browser(
-        driver_name="chrome", executable_path=CHROMEDRIVER_EXECUTABLE_PATH
+        driver_name="chrome", executable_path=CHROMEDRIVER_EXECUTABLE_PATH, headless=True, incognito=True
     ) as browser:
         players_data = []
         browser.visit(KICKEST_URL)
