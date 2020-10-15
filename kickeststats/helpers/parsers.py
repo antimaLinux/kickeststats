@@ -43,9 +43,10 @@ class RowParser(HTMLParser):
         return self._row_data
 
     def _str_to_num(self, val: str) -> Union[str, float]:
-        if val.isdigit():
+        try:
             return float(val)
-        return val
+        except ValueError:
+            return val
 
     def error(self, message: str) -> None:
         raise ParsingException(message)
