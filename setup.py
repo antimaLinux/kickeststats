@@ -14,6 +14,11 @@ setup(
     author='Riccardo Vilardi, Matteo Manica',
     packages=['kickscraper'],
     long_description=open('README.md').read(),
-    package_data={'kickscraper': ['py.typed']},
+    package_data={
+        'kickscraper': [
+            'py.typed',
+            'resources/tests/players.jsonl'
+        ]
+    },
     install_requires=['pandas==1.1.2']
 )
