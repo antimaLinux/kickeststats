@@ -69,7 +69,7 @@ class Pagination:
         return parser.out()
 
     @classmethod
-    def from_browser(cls, browser: ChromeWebDriver) -> Iterator:
+    def from_browser(cls, browser: ChromeWebDriver) -> range:
         return cls(browser).data
 
 
