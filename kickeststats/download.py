@@ -4,8 +4,8 @@ from splinter.driver.webdriver import WebDriverElement  # type: ignore
 from typing import List
 import time
 
-from kickeststats.helpers.parsers import HeaderParser, RowParser, PaginationParser
-from kickeststats.constants import KICKEST_URL, CHROMEDRIVER_EXECUTABLE_PATH
+from .helpers.parsers import HeaderParser, RowParser, PaginationParser
+from .constants import KICKEST_URL, CHROMEDRIVER_EXECUTABLE_PATH
 from loguru import logger
 
 
@@ -110,7 +110,3 @@ def download_data() -> List[dict]:
             time.sleep(1)
 
         return players_data
-
-
-if __name__ == "__main__":
-    download_data()

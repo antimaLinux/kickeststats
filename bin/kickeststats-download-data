@@ -1,0 +1,23 @@
+#! /usr/bin/env python3
+import os
+import json
+import argparse
+from kickeststats.download import download_data
+
+parser = argparse.ArgumentParser()
+parser.add_argument(
+    "players_jsonl_filepath", type=str, help=("path to the .jsonl with the downloaded data.")
+)
+
+
+if __name__ == "__main__":
+    # parse arguments
+    args = parser.parse_args()
+    # download player data
+    players = download_data()
+    # dump them
+    with open(args.players_jsonl_filepath, "wt") as fp:
+        fp.writelines([
+            f'{json.dumps(player)}{os.linesep}'
+            for player in players
+        ])
