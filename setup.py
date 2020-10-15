@@ -8,6 +8,8 @@ __version__ = re.search(
     io.open("kickeststats/__init__.py", encoding="utf_8_sig").read()
 ).group(1)
 
+REQUIRED = [req.strip() for req in open('requirements.txt').readlines()]
+
 setup(
     name="kickeststats",
     version=__version__,
@@ -21,9 +23,6 @@ setup(
             "resources/drivers/chromedriver"
         ]
     },
-    install_requires=[
-        "pandas==1.1.2", "loguru==0.5.3",
-        "splinter==0.14.0", "black==19.10b0"
-    ],
+    install_requires=REQUIRED,
     scripts=["bin/kickeststats-download-data"]
 )
