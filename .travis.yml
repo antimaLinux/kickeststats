@@ -14,9 +14,11 @@ install:
     pip3 install -e .
 
 script:
-  - python3 -m pytest -sv --cov=kickeststats --cov-fail-under=60
+  - python3 -m pytest -sv --cov=kickeststats --cov-fail-under=30
   - python3 -m flake8 --disable-noqa kickeststats
-  - mypy kickeststats
+  - mypy kickeststats --warn-unused-ignores
+  # testing scripts installation
+  - kickeststats-download-data --help
 
 deploy:
   provider: script

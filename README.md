@@ -22,3 +22,13 @@ Install the package in editable mode:
 ```console
 pip install -e .
 ```
+
+## usage
+
+Download data for player stats in the last game rounds in JSONL format:
+
+```console
+kickeststats-download-data /tmp/players.jsonl
+```
+
+**NOTE:** requires Chrome installed.

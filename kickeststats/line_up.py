@@ -18,8 +18,7 @@ class LineUp:
     def _valid(self) -> bool:
         """Check if the lineup is valid."""
         return (
-            self.goal_keeper + self.defenders + self.midfielders +
-            self.forwards
+            self.goal_keeper + self.defenders + self.midfielders + self.forwards
         ) == 11
 
     def __post_init__(self) -> None:
@@ -27,7 +26,7 @@ class LineUp:
         Check validity for the line-up.
         """
         if not self._valid():
-            raise RuntimeError('Invalid line-up')
+            raise RuntimeError("Invalid line-up")
 
 
 @dataclass
@@ -94,11 +93,11 @@ class LU541(LineUp):
 
 
 LINE_UP_FACTORY = {
-    '3-4-3': LU343,
-    '4-3-3': LU433,
-    '3-5-2': LU352,
-    '4-4-2': LU442,
-    '5-3-2': LU532,
-    '4-5-1': LU451,
-    '5-4-1': LU541
+    "3-4-3": LU343,
+    "4-3-3": LU433,
+    "3-5-2": LU352,
+    "4-4-2": LU442,
+    "5-3-2": LU532,
+    "4-5-1": LU451,
+    "5-4-1": LU541,
 }

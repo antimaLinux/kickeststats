@@ -1,0 +1,23 @@
+[flake8]
+
+max-line-length = 120
+max-complexity  = 15
+show-pep8       = True
+jobs            = 2
+doctests        = True
+benchmark       = True
+
+# E114 indentation is not a multiple of four (comment)
+# E116 unexpected indentation (comment)
+# E203 whitespace before ':'
+# E221 multiple spaces before operator
+# E222 multiple spaces after operator
+# E241 multiple spaces after ':'
+# E251 unexpected spaces around keyword / parameter equals
+# E272 multiple spaces before keyword
+# E722 do not use bare except
+# E731 do not assign a lambda expression, use a def
+# W503 line break occurred before a binary operator (badly implemented, doesn't allow log operators within brackets)
+
+
+ignore = E114,E116,E203,E221,E222,E241,E251,E272,E722,E731,W503
