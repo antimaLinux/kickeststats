@@ -90,14 +90,14 @@ class NextPage:
         self._next.click()
 
 
-def download_data():
+def download_data() -> List[dict]:
 
     with Browser(
         driver_name="chrome", executable_path=CHROMEDRIVER_EXECUTABLE_PATH
     ) as browser:
         players_data = []
         browser.visit(KICKEST_URL)
-        # required sleep for interaction with webdriver
+        # required sleep due to interaction with webdriver
         time.sleep(2)
         pagination = Pagination.from_browser(browser)
         header = TableHeader.from_browser(browser)
@@ -106,8 +106,10 @@ def download_data():
             data = TableData.from_browser(browser, header)
             players_data.extend(data)
             NextPage(browser).visit()
-            # required sleep for interaction with webdriver
+            # required sleep due to interaction with webdriver
             time.sleep(1)
+
+        return players_data
 
 
 if __name__ == "__main__":
