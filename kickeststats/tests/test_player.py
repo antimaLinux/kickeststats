@@ -10,7 +10,7 @@ PLAYER_EXAMPLE = {
     'PTS': 0.0, 'CR': '13.50'
 }
 PLAYER_JSONL_FILEPATH = pkg_resources.resource_filename(
-    'kickscraper', 'resources/tests/players.jsonl'
+    'kickeststats', 'resources/tests/players.jsonl'
 )
 
 
