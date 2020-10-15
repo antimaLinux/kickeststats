@@ -7,7 +7,7 @@ from ..player import (
 
 PLAYER_EXAMPLE = {
     "Giocatore": "R. Leao", "Pos": "Att", "Squadra": "MIL",
-    "PTS": 0.0, "CR": "13.50"
+    "PTS": 0.0, "CR": 13.50
 }
 PLAYER_JSONL_FILEPATH = pkg_resources.resource_filename(
     "kickeststats", "resources/tests/players.jsonl"
