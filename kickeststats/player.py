@@ -1,5 +1,5 @@
 """Player utitlities."""
-from typing import List
+from typing import List, Callable, Any, Dict
 from enum import Enum, auto
 from dataclasses import dataclass
 
@@ -28,10 +28,13 @@ POSITION_MAPPINGS = {
     'Att': Position.FORWARD
 }
 
+PLAYER_NAME_FN: Callable[[Any], str] = str.__call__
+PLAYER_POSITION_FN: Callable[[Any], Position] = POSITION_MAPPINGS.__getitem__
+PLAYER_VALUE_FN: Callable[[Any], float] = float.__call__
 PLAYER_DICTIONARY_KEYS_FORMATTER_FN = {
-    'name': str,
-    'position': POSITION_MAPPINGS.__getitem__,
-    'value': float
+    'name': PLAYER_NAME_FN,
+    'position': PLAYER_POSITION_FN,
+    'value': PLAYER_VALUE_FN
 }
 
 
@@ -54,7 +57,7 @@ class Player:
             Player: the generated player.
         """
         player_dictionary_keys = set(player_dictionary.keys())
-        player_init_kwargs = dict()
+        player_init_kwargs: Dict[str, Any] = dict()
         for argument, keys in PLAYER_DICTIONARY_KEYS_MAPPING.items():
             # NOTE: we pick one if multiples are matching
             mapped_argument = next(iter(keys & player_dictionary_keys))

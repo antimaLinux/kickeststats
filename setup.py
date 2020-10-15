@@ -1,6 +1,6 @@
+"""Package setup."""
 import io
 import re
-
 from setuptools import setup
 
 __version__ = re.search(
