@@ -1,7 +1,7 @@
 """Contants for the kickeststats."""
 import os
 import pkg_resources
-from kickeststats.exceptions import EnvVariableNotSet
+from .exceptions import EnvVariableNotSet
 
 CHROMEDRIVER_EXECUTABLE_PATH = os.environ.get(
     "CHROMEDRIVER_EXECUTABLE_PATH",

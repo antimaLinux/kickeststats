@@ -1,5 +1,12 @@
-"""Soccer lineup types."""
+"""Soccer line-up types."""
 from dataclasses import dataclass
+from .player import Position
+
+
+POSITION_NAMES_TO_ATTRIBUTES = {
+    position.name: position.name.lower()
+    for position in Position
+}
 
 
 @dataclass
@@ -10,15 +17,15 @@ class LineUp:
     Beware, this class is not valid (the line-up does not sum to 11).
     """
 
-    goal_keeper: int = 1
-    defenders: int = 0
-    midfielders: int = 0
-    forwards: int = 0
+    goalkeeper: int = 1
+    defender: int = 0
+    midfielder: int = 0
+    forward: int = 0
 
     def _valid(self) -> bool:
-        """Check if the lineup is valid."""
+        """Check if the line-up is valid."""
         return (
-            self.goal_keeper + self.defenders + self.midfielders + self.forwards
+            self.goalkeeper + self.defender + self.midfielder + self.forward
         ) == 11
 
     def __post_init__(self) -> None:
@@ -33,63 +40,63 @@ class LineUp:
 class LU343(LineUp):
     """3-4-3 line-up."""
 
-    defenders: int = 3
-    midfielders: int = 4
-    forwards: int = 3
+    defender: int = 3
+    midfielder: int = 4
+    forward: int = 3
 
 
 @dataclass
 class LU433(LineUp):
     """4-3-3 line-up."""
 
-    defenders: int = 4
-    midfielders: int = 3
-    forwards: int = 3
+    defender: int = 4
+    midfielder: int = 3
+    forward: int = 3
 
 
 @dataclass
 class LU352(LineUp):
     """3-5-2 line-up."""
 
-    defenders: int = 3
-    midfielders: int = 5
-    forwards: int = 2
+    defender: int = 3
+    midfielder: int = 5
+    forward: int = 2
 
 
 @dataclass
 class LU442(LineUp):
     """4-4-2 line-up."""
 
-    defenders: int = 4
-    midfielders: int = 4
-    forwards: int = 2
+    defender: int = 4
+    midfielder: int = 4
+    forward: int = 2
 
 
 @dataclass
 class LU532(LineUp):
     """5-3-2 line-up."""
 
-    defenders: int = 5
-    midfielders: int = 3
-    forwards: int = 2
+    defender: int = 5
+    midfielder: int = 3
+    forward: int = 2
 
 
 @dataclass
 class LU451(LineUp):
     """4-5-1 line-up."""
 
-    defenders: int = 4
-    midfielders: int = 5
-    forwards: int = 1
+    defender: int = 4
+    midfielder: int = 5
+    forward: int = 1
 
 
 @dataclass
 class LU541(LineUp):
     """5-4-1 line-up."""
 
-    defenders: int = 5
-    midfielders: int = 4
-    forwards: int = 1
+    defender: int = 5
+    midfielder: int = 4
+    forward: int = 1
 
 
 LINE_UP_FACTORY = {

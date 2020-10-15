@@ -1,8 +1,6 @@
-"""Testing line-up utilities."""
+"""Testing player utilities."""
 import pkg_resources
-from ..player import (
-    Player, POSITION_MAPPINGS
-)
+from ..player import Player, POSITION_MAPPINGS
 
 
 PLAYER_EXAMPLE = {
@@ -20,9 +18,17 @@ def test_player_from_dict():
     assert player.name == PLAYER_EXAMPLE["Giocatore"]
     assert player.position == POSITION_MAPPINGS[PLAYER_EXAMPLE["Pos"]]
     assert player.value == PLAYER_EXAMPLE["CR"]
+    assert player.points == PLAYER_EXAMPLE["PTS"]
+    assert player.team == PLAYER_EXAMPLE["Squadra"]
 
 
 def test_players_from_jsonl():
     """Testing the initialization of a list of players from a jsonl."""
     players = Player.from_jsonl(PLAYER_JSONL_FILEPATH)
     assert len(players) > 1
+
+
+def test_players_from_list_to_df():
+    """Testing the transformation from list of players to data-frame."""
+    players = Player.from_jsonl(PLAYER_JSONL_FILEPATH)
+    assert Player.from_list_to_df(players).shape[0] == len(players)

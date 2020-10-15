@@ -1,7 +1,9 @@
 """Player utitlities."""
-from typing import List, Callable, Any, Dict
+import hashlib
+import pandas as pd
 from enum import Enum, auto
 from dataclasses import dataclass
+from typing import List, Callable, Any, Dict
 
 
 class Position(Enum):
@@ -15,26 +17,36 @@ class Position(Enum):
 
 # NOTE: string to set to allow multilingual support.
 PLAYER_DICTIONARY_KEYS_MAPPING = {
-    'name': {'Giocatore'},
-    'position': {'Pos'},
-    'value': {'CR'}
+    "name": {"Giocatore", "name"},
+    "position": {"Pos", "position"},
+    "value": {"CR", "value"},
+    "team": {"Squadra", "team"},
+    "points": {"PTS", "points"}
 }
 
 # NOTE: supporting multiple languages.
 POSITION_MAPPINGS = {
-    'Por': Position.GOALKEEPER,
-    'Dif': Position.DEFENDER,
-    'Cen': Position.MIDFIELDER,
-    'Att': Position.FORWARD
+    "Por": Position.GOALKEEPER,
+    "Dif": Position.DEFENDER,
+    "Cen": Position.MIDFIELDER,
+    "Att": Position.FORWARD,
+    "GOALKEEPER": Position.GOALKEEPER,
+    "DEFENDER": Position.DEFENDER,
+    "MIDFIELDER": Position.MIDFIELDER,
+    "FORWARD": Position.FORWARD
 }
 
 PLAYER_NAME_FN: Callable[[Any], str] = str.__call__
+TEAM_FN: Callable[[Any], str] = str.__call__
 PLAYER_POSITION_FN: Callable[[Any], Position] = POSITION_MAPPINGS.__getitem__
 PLAYER_VALUE_FN: Callable[[Any], float] = float.__call__
+PLAYER_POINTS_FN: Callable[[Any], float] = float.__call__
 PLAYER_DICTIONARY_KEYS_FORMATTER_FN = {
-    'name': PLAYER_NAME_FN,
-    'position': PLAYER_POSITION_FN,
-    'value': PLAYER_VALUE_FN
+    "name": PLAYER_NAME_FN,
+    "position": PLAYER_POSITION_FN,
+    "team": TEAM_FN,
+    "value": PLAYER_VALUE_FN,
+    "points": PLAYER_POINTS_FN
 }
 
 
@@ -43,10 +55,13 @@ class Player:
 
     name: str
     position: Position
-    value: float
+    team: str
+    captain: bool = False
+    value: float = 0.0
+    points: float = 0.0
 
     @staticmethod
-    def from_dict(player_dictionary: dict) -> 'Player':
+    def from_dict(player_dictionary: dict) -> "Player":
         """
         Create a player from a dictionary.
 
@@ -60,15 +75,18 @@ class Player:
         player_init_kwargs: Dict[str, Any] = dict()
         for argument, keys in PLAYER_DICTIONARY_KEYS_MAPPING.items():
             # NOTE: we pick one if multiples are matching
-            mapped_argument = next(iter(keys & player_dictionary_keys))
-            mapped_value = player_dictionary[mapped_argument]
-            player_init_kwargs[argument] = (
-                PLAYER_DICTIONARY_KEYS_FORMATTER_FN[argument](mapped_value)
-            )
+            try:
+                mapped_argument = next(iter(keys & player_dictionary_keys))
+                mapped_value = player_dictionary[mapped_argument]
+                player_init_kwargs[argument] = (
+                    PLAYER_DICTIONARY_KEYS_FORMATTER_FN[argument](mapped_value)
+                )
+            except StopIteration:
+                continue
         return Player(**player_init_kwargs)
 
     @staticmethod
-    def from_jsonl(filepath: str) -> List['Player']:
+    def from_jsonl(filepath: str) -> List["Player"]:
         """
         Parse players from JSONL.
 
@@ -86,3 +104,27 @@ class Player:
                 for line in fp
             ]
         return players
+
+    @staticmethod
+    def from_list_to_df(players: List["Player"]) -> pd.DataFrame:
+        """
+        List of players to a data-frame.
+
+        Args:
+            players (List[Player]): list of players.
+
+        Returns:
+            pd.DataFrame: a data-frame with players data.
+        """
+        players_df = pd.DataFrame(players)
+        players_df["position_name"], players_df["position_value"] = zip(*[
+            (position.name, position.value)
+            for position in players_df["position"]
+        ])
+        players_df["_id"] = [
+            hashlib.md5(
+                f"{row['name']}{row['position_name']}{row['team']}".encode()
+            ).hexdigest()
+            for _, row in players_df.iterrows()
+        ]
+        return players_df
