@@ -6,6 +6,7 @@ import time
 
 from kickeststats.helpers.parsers import HeaderParser, RowParser, PaginationParser
 from kickeststats.constants import KICKEST_URL, CHROMEDRIVER_EXECUTABLE_PATH
+from kickeststats.exceptions import EnvVariableNotSet
 from loguru import logger
 
 
@@ -91,6 +92,8 @@ class NextPage:
 
 
 def download_data() -> List[dict]:
+    if not CHROMEDRIVER_EXECUTABLE_PATH:
+        raise EnvVariableNotSet("CHROMEDRIVER_EXECUTABLE_PATH")
 
     with Browser(
         driver_name="chrome", executable_path=CHROMEDRIVER_EXECUTABLE_PATH
