@@ -1,6 +1,6 @@
 from splinter import Browser
-from splinter.driver.webdriver.chrome import WebDriver as ChromeWebDriver
-from splinter.driver.webdriver import WebDriverElement
+from splinter.driver.webdriver.chrome import WebDriver as ChromeWebDriver  # type: ignore
+from splinter.driver.webdriver import WebDriverElement  # type: ignore
 from typing import List, Iterator
 import time
 
@@ -63,7 +63,7 @@ class Pagination:
         return browser.find_by_xpath(self.xpath).first.html
 
     @property
-    def data(self) -> Iterator:
+    def data(self) -> range:
         parser = PaginationParser()
         parser.feed(self._data)
         return parser.out()
