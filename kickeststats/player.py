@@ -116,15 +116,22 @@ class Player:
         Returns:
             pd.DataFrame: a data-frame with players data.
         """
-        players_df = pd.DataFrame(players)
-        players_df["position_name"], players_df["position_value"] = zip(*[
-            (position.name, position.value)
-            for position in players_df["position"]
-        ])
-        players_df["_id"] = [
-            hashlib.md5(
-                f"{row['name']}{row['position_name']}{row['team']}".encode()
-            ).hexdigest()
-            for _, row in players_df.iterrows()
-        ]
+        players_df = pd.DataFrame(
+            players,
+            columns=[
+                "name", "position", "team", "captain", "value",
+                "points", "position_name", "position_value", "_id"
+            ]
+        )
+        if not players_df.empty:
+            players_df["position_name"], players_df["position_value"] = zip(*[
+                (position.name, position.value)
+                for position in players_df["position"]
+            ])
+            players_df["_id"] = [
+                hashlib.md5(
+                    f"{row['name']}{row['position_name']}{row['team']}".encode()
+                ).hexdigest()
+                for _, row in players_df.iterrows()
+            ]
         return players_df

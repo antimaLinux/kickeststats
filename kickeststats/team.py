@@ -12,14 +12,13 @@ class Team:
     """Team definition."""
 
     def __init__(
-        self, players: List[Player], substitutes: List[Player], line_up: str
+        self, players: List[Player], line_up: str, substitutes: List[Player] = []
     ):
         """
         Initialize the team.
 
         Args:
             players (List[Player]): players in the starting line-up.
-            substitutes (List[Player]): players on the bench.
             line_up (str): type of line-up.
                 Currently supported:
                 - "3-4-3"
@@ -29,6 +28,8 @@ class Team:
                 - "5-3-2"
                 - "4-5-1"
                 - "5-4-1"
+            substitutes (List[Player], optional): players on the bench. Defaults to [],
+                a.k.a., no substitutes.
 
         Raises:
             UnsupportedLineUp: the line-up requested is not supported.
