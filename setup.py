@@ -1,7 +1,7 @@
 """Package setup."""
 import io
 import re
-from setuptools import setup
+from setuptools import setup, find_packages
 
 __version__ = re.search(
     r'__version__\s*=\s*[\'"]([^\'"]*)[\'"]',
@@ -14,10 +14,7 @@ setup(
     name="kickeststats",
     version=__version__,
     author="Riccardo Vilardi, Matteo Manica",
-    packages=[
-        "kickeststats", "kickeststats.helpers",
-        "kickeststats.tests"
-    ],
+    packages=find_packages(),
     long_description=open("README.md").read(),
     package_data={
         "kickeststats": [
