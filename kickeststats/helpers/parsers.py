@@ -1,8 +1,8 @@
 from html.parser import HTMLParser
 from typing import List, Union
 
-from kickeststats.exceptions import ParsingException
-from kickeststats.helpers.data import grouper
+from ..exceptions import ParsingException
+from .data import grouper
 
 
 class HeaderParser(HTMLParser):
