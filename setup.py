@@ -14,7 +14,10 @@ setup(
     name="kickeststats",
     version=__version__,
     author="Riccardo Vilardi, Matteo Manica",
-    packages=["kickeststats"],
+    packages=[
+        "kickeststats", "kickeststats.helpers",
+        "kickeststats.tests"
+    ],
     long_description=open("README.md").read(),
     package_data={
         "kickeststats": [
