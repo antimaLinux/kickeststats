@@ -1,12 +1,11 @@
 from splinter import Browser  # type: ignore
 from splinter.driver.webdriver.chrome import WebDriver as ChromeWebDriver  # type: ignore
 from splinter.driver.webdriver import WebDriverElement  # type: ignore
-from typing import List
+from typing import List, Optional
+from loguru import logger
 import time
-
 from .helpers.parsers import HeaderParser, RowParser, PaginationParser
 from .constants import KICKEST_URL, CHROMEDRIVER_EXECUTABLE_PATH
-from loguru import logger
 
 
 class TableHeader:
@@ -90,13 +89,26 @@ class NextPage:
         self._next.click()
 
 
-def download_data() -> List[dict]:
+def download_data(match_day: Optional[int] = None) -> List[dict]:
+    """
+    Download data for a given match day.
 
+    Args:
+        match_day (int): day of the match. Default to None, download
+            non specific day.
+
+    Returns:
+        List[dict]: list of player statistics.
+    """
     with Browser(
         driver_name="chrome", executable_path=CHROMEDRIVER_EXECUTABLE_PATH, headless=True, incognito=True
     ) as browser:
         players_data = []
-        browser.visit(KICKEST_URL)
+        url = KICKEST_URL
+        if match_day is not None:
+            url = f"{KICKEST_URL}&matchdays={match_day}"
+        logger.info(f"Downloading data from {url}")
+        browser.visit(url)
         # required sleep due to interaction with webdriver
         time.sleep(2)
         pagination = Pagination.from_browser(browser)
