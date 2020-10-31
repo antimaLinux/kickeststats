@@ -12,7 +12,12 @@ parser = argparse.ArgumentParser(
     )
 )
 parser.add_argument(
-    "players_jsonl_filepath", type=str, help=("path to the .jsonl with the downloaded data.")
+    "players_jsonl_filepath", type=str,
+    help=("path to the .jsonl with the downloaded data.")
+)
+parser.add_argument(
+    "-d", "--match_day", type=int, default=None,
+    help=("match day. Defaults to non specific match day data.")
 )
 
 
@@ -20,10 +25,10 @@ if __name__ == "__main__":
     # parse arguments
     args = parser.parse_args()
     # download player data
-    players = download_data()
+    players = download_data(match_day=args.match_day)
     # dump them
     with open(args.players_jsonl_filepath, "wt") as fp:
         fp.writelines([
-            f'{json.dumps(player)}{os.linesep}'
+            f"{json.dumps(player)}{os.linesep}"
             for player in players
         ])
