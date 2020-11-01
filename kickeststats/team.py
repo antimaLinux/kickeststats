@@ -67,10 +67,10 @@ class Team:
         playing_players = all_players[
             all_players["_id"].isin(self.players["_id"])
         ]
-        # substitutes
+        # substitutes (preserve bench order)
         substitutes = all_players[
             all_players_with_points & all_players["_id"].isin(self.substitutes["_id"])
-        ].sort_values(by="points", ascending=False)
+        ]
         if not substitutes.empty:
             # replace the worst candidate players one by one
             candidates_for_substitution = playing_players[playing_players["points"] == 0.0]
