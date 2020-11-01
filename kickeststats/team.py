@@ -1,13 +1,15 @@
 """Team utilities."""
 import os
+import numpy as np
 import pandas as pd
 from typing import List
+from loguru import logger
 from .player import Player
 from .exceptions import UnsupportedLineUp, InvalidTeamLineup
 from .line_up import LINE_UP_FACTORY, POSITION_NAMES_TO_ATTRIBUTES
 
 MAX_SUBSTITUTIONS = int(os.environ.get("KICKESTSTATS_MAX_SUBSTITUTIONS", 5))
-GOAL_THRESHOLD = float(os.environ.get("KICKESTSTATS_GOAL_THRESHOLD", 230))
+GOAL_THRESHOLD = float(os.environ.get("KICKESTSTATS_GOAL_THRESHOLD", 220))
 GOAL_GAP = float(os.environ.get("KICKESTSTATS_GOAL_GAP", 20))
 
 
@@ -87,36 +89,58 @@ class Team:
         # candidate players
         playing_players = all_players[
             all_players["_id"].isin(self.players["_id"])
-        ]
+        ].copy()
+        if self.players["captain"].any():
+            captain_id = self.players[self.players["captain"]].iloc[0]["_id"]
+        else:
+            logger.warning("Captain not provided picking a random one")
+            captain_id = self.players.sample(1).iloc[0]["_id"]
+        playing_players.loc[:, "captain"] = (playing_players["_id"] == captain_id)
+        logger.debug(f"Playing players: {playing_players}")
         # substitutes (preserve bench order)
         substitutes = all_players[
             all_players_with_points & all_players["_id"].isin(self.substitutes["_id"])
         ]
+        logger.debug(f"Potential substitutes: {substitutes}")
         if not substitutes.empty:
             # replace the worst candidate players one by one
             candidates_for_substitution = playing_players[playing_players["points"] == 0.0]
+            logger.debug(f"Candidates for substitution: {candidates_for_substitution}")
             to_be_substituted_ids: List[str] = []
             substitutes_ids: List[str] = []
+            captain_substitute_id: str = ''
             for _, player in candidates_for_substitution.iterrows():
+                logger.debug(f"Attempting to substitute: {player}")
                 substitutes_per_position = substitutes[
                     (substitutes["position_name"] == player["position_name"])
                     & ~substitutes["_id"].isin(substitutes_ids)
                 ]
+                logger.debug(f"Potentential substitutes in the position: {substitutes_per_position}")
                 if not substitutes_per_position.empty:
+                    logger.debug("Performing substitution")
                     to_be_substituted_ids.append(player["_id"])
-                    # NOTE: sorted descending per points
-                    substitutes_ids.append(substitutes.iloc[0]["_id"])
+                    current_substitute_id = substitutes_per_position.iloc[0]["_id"]
+                    substitutes_ids.append(current_substitute_id)
+                    if player["captain"]:
+                        logger.warning("Substitution of the captain")
+                        captain_substitute_id = current_substitute_id
+                    logger.debug(f"To be substituted: {to_be_substituted_ids}")
+                    logger.debug(f"Substitutes: {substitutes_ids}")
                 if len(to_be_substituted_ids) == MAX_SUBSTITUTIONS:
+                    logger.info("Reached maxiumum substitutions limit")
                     break
             # get the final list
             playing_players = pd.concat([
                 playing_players[~playing_players["_id"].isin(to_be_substituted_ids)],
                 substitutes[substitutes["_id"].isin(substitutes_ids)]
-            ], axis=0)
+            ], axis=0).copy()
+            if len(captain_substitute_id):
+                playing_players.loc[:, "captain"] = (playing_players["_id"] == captain_substitute_id)
+            logger.info(f"Final list: {playing_players}")
         # compute the points
         points = 0.0 if is_away else 6.0
         for _, player in playing_players.iterrows():
             points += (
                 2 * player["points"] if player["captain"] else player["points"]
             )
-        return points
+        return np.round(points, 2)

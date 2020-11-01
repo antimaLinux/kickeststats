@@ -20,6 +20,7 @@ setup(
         "kickeststats": [
             "py.typed",
             "resources/tests/players.jsonl",
+            "resources/tests/players_test_case.jsonl",
             "resources/drivers/chromedriver"
         ]
     },
