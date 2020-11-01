@@ -1,11 +1,32 @@
 """Team utilities."""
+import os
 import pandas as pd
 from typing import List
 from .player import Player
 from .exceptions import UnsupportedLineUp, InvalidTeamLineup
 from .line_up import LINE_UP_FACTORY, POSITION_NAMES_TO_ATTRIBUTES
 
-MAX_SUBSTITUTIONS = 5
+MAX_SUBSTITUTIONS = int(os.environ.get("KICKESTSTATS_MAX_SUBSTITUTIONS", 5))
+GOAL_THRESHOLD = float(os.environ.get("KICKESTSTATS_GOAL_THRESHOLD", 230))
+GOAL_GAP = float(os.environ.get("KICKESTSTATS_GOAL_GAP", 20))
+
+
+def points_to_goals(points: float) -> int:
+    """
+    Convert points to goals.
+
+    Args:
+        points (float): points.
+
+    Returns:
+        int: [description]
+    """
+    goals = 0
+    threshold = GOAL_THRESHOLD
+    while points > threshold:
+        goals += 1
+        threshold += GOAL_GAP
+    return goals
 
 
 class Team:
@@ -78,7 +99,8 @@ class Team:
             substitutes_ids: List[str] = []
             for _, player in candidates_for_substitution.iterrows():
                 substitutes_per_position = substitutes[
-                    substitutes["position_name"] == player["position_name"] & ~substitutes["_id"].isin(substitutes_ids)
+                    (substitutes["position_name"] == player["position_name"])
+                    & ~substitutes["_id"].isin(substitutes_ids)
                 ]
                 if not substitutes_per_position.empty:
                     to_be_substituted_ids.append(player["_id"])

@@ -2,8 +2,9 @@
 import pytest
 import pkg_resources
 import pandas as pd
+from loguru import logger
 from ..player import Player
-from ..team import Team
+from ..team import Team, points_to_goals, GOAL_THRESHOLD, GOAL_GAP
 from ..exceptions import InvalidTeamLineup, UnsupportedLineUp
 
 
@@ -45,7 +46,19 @@ def test_team_initialization():
 
 
 def test_team_points():
-    """Testing the initialization of a team."""
+    """Testing the points calculation of a team."""
     team = Team(players=_get_team('4-4-2'), substitutes=_get_team('2-2-2'), line_up='4-4-2')
     assert team.points(PLAYERS) == 0.0
     assert team.points(PLAYERS, is_away=False) == 6.0
+
+
+def test_points_to_goals():
+    """Testing the conversion from points to goals."""
+    points = GOAL_THRESHOLD - GOAL_GAP // 2
+    goals = 0
+    while points < 400.:
+        converted_goals = points_to_goals(points)
+        logger.info(f"{points} points converted to {converted_goals}")
+        assert goals == converted_goals
+        goals += 1
+        points += GOAL_GAP
