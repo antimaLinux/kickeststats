@@ -102,6 +102,10 @@ class Team:
             all_players_with_points & all_players["_id"].isin(self.substitutes["_id"])
         ]
         logger.debug(f"Potential substitutes: {substitutes}")
+        # sort substitutes by order
+        substitutes.index = substitutes["_id"]
+        substitutes = substitutes.reindex(self.substitutes["_id"]).dropna()
+        logger.debug(f"Reordered substitutes: {substitutes}")
         if not substitutes.empty:
             # replace the worst candidate players one by one
             candidates_for_substitution = playing_players[playing_players["points"] == 0.0]
