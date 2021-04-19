@@ -9,7 +9,7 @@ from .exceptions import UnsupportedLineUp, InvalidTeamLineup
 from .line_up import LINE_UP_FACTORY, POSITION_NAMES_TO_ATTRIBUTES
 
 MAX_SUBSTITUTIONS = int(os.environ.get("KICKESTSTATS_MAX_SUBSTITUTIONS", 5))
-GOAL_THRESHOLD = float(os.environ.get("KICKESTSTATS_GOAL_THRESHOLD", 220))
+GOAL_THRESHOLD = float(os.environ.get("KICKESTSTATS_GOAL_THRESHOLD", 200))
 GOAL_GAP = float(os.environ.get("KICKESTSTATS_GOAL_GAP", 20))
 
 
