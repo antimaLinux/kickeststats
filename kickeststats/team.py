@@ -11,6 +11,8 @@ from .line_up import LINE_UP_FACTORY, POSITION_NAMES_TO_ATTRIBUTES
 MAX_SUBSTITUTIONS = int(os.environ.get("KICKESTSTATS_MAX_SUBSTITUTIONS", 5))
 GOAL_THRESHOLD = float(os.environ.get("KICKESTSTATS_GOAL_THRESHOLD", 180))
 GOAL_GAP = float(os.environ.get("KICKESTSTATS_GOAL_GAP", 20))
+MINUTES_THRESHOLD = float(os.environ.get("KICKESTSTATS_MINUTES_THRESHOLD", 15))
+POINTS_THRESHOLD = float(os.environ.get("KICKESTSTATS_POINTS_THRESHOLD", 10))
 
 
 def points_to_goals(points: float) -> int:
@@ -108,7 +110,11 @@ class Team:
         logger.debug(f"Reordered substitutes: {substitutes}")
         if not substitutes.empty:
             # replace the worst candidate players one by one
-            candidates_for_substitution = playing_players[playing_players["points"] == 0.0]
+            candidates_for_substitution = playing_players[
+                (playing_players["points"] == 0.0) | (
+                    (playing_players["points"] < POINTS_THRESHOLD) & (playing_players["minutes"] < MINUTES_THRESHOLD)
+                )
+            ]
             logger.debug(f"Candidates for substitution: {candidates_for_substitution}")
             to_be_substituted_ids: List[str] = []
             substitutes_ids: List[str] = []
