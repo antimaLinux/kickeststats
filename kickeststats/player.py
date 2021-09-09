@@ -21,7 +21,8 @@ PLAYER_DICTIONARY_KEYS_MAPPING = {
     "position": {"Pos", "position"},
     "value": {"CR", "value"},
     "team": {"Squadra", "team"},
-    "points": {"PTS", "points"}
+    "points": {"PTS", "points"},
+    "minutes": {"Minuti", "minutes"}
 }
 
 # NOTE: supporting multiple languages.
@@ -41,12 +42,14 @@ TEAM_FN: Callable[[Any], str] = str.__call__
 PLAYER_POSITION_FN: Callable[[Any], Position] = POSITION_MAPPINGS.__getitem__
 PLAYER_VALUE_FN: Callable[[Any], float] = float.__call__
 PLAYER_POINTS_FN: Callable[[Any], float] = float.__call__
+PLAYER_MINUTES_FN: Callable[[Any], float] = float.__call__
 PLAYER_DICTIONARY_KEYS_FORMATTER_FN = {
     "name": PLAYER_NAME_FN,
     "position": PLAYER_POSITION_FN,
     "team": TEAM_FN,
     "value": PLAYER_VALUE_FN,
-    "points": PLAYER_POINTS_FN
+    "points": PLAYER_POINTS_FN,
+    "minutes": PLAYER_MINUTES_FN
 }
 
 
@@ -59,6 +62,7 @@ class Player:
     captain: bool = False
     value: float = 0.0
     points: float = 0.0
+    minutes: float = 0.0
 
     @staticmethod
     def from_dict(player_dictionary: dict) -> "Player":
@@ -120,7 +124,7 @@ class Player:
             players,
             columns=[
                 "name", "position", "team", "captain", "value",
-                "points", "position_name", "position_value", "_id"
+                "points", "minutes", "position_name", "position_value", "_id"
             ]
         )
         if not players_df.empty:
