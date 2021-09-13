@@ -31,6 +31,10 @@ POSITION_MAPPINGS = {
     "Dif": Position.DEFENDER,
     "Cen": Position.MIDFIELDER,
     "Att": Position.FORWARD,
+    Position.GOALKEEPER: Position.GOALKEEPER,
+    Position.DEFENDER: Position.DEFENDER,
+    Position.MIDFIELDER: Position.MIDFIELDER,
+    Position.FORWARD: Position.FORWARD,
     "GOALKEEPER": Position.GOALKEEPER,
     "DEFENDER": Position.DEFENDER,
     "MIDFIELDER": Position.MIDFIELDER,
@@ -139,3 +143,20 @@ class Player:
                 for _, row in players_df.iterrows()
             ]
         return players_df
+
+    @staticmethod
+    def from_df_to_list(players_df: pd.DataFrame) -> List["Player"]:
+        """
+        Data-frame of players to list.
+
+        Args:
+            players_df (pd.DataFrame): a data-frame with players data.
+
+        Returns:
+            List[Player]: a list of players.
+        """
+        print(players_df["position"])
+        return [
+            Player.from_dict(player_row.to_dict())
+            for _, player_row in players_df.iterrows()
+        ]

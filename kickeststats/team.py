@@ -6,7 +6,7 @@ from typing import List
 from loguru import logger
 from .player import Player
 from .exceptions import UnsupportedLineUp, InvalidTeamLineup
-from .line_up import LINE_UP_FACTORY, POSITION_NAMES_TO_ATTRIBUTES
+from .line_up import LINE_UP_FACTORY, POSITION_NAMES_TO_ATTRIBUTES, SORTED_LINE_UPS
 
 MAX_SUBSTITUTIONS = int(os.environ.get("KICKESTSTATS_MAX_SUBSTITUTIONS", 5))
 GOAL_THRESHOLD = float(os.environ.get("KICKESTSTATS_GOAL_THRESHOLD", 180))
@@ -61,15 +61,26 @@ class Team:
         """
         self.players = Player.from_list_to_df(players)
         self.substitutes = Player.from_list_to_df(substitutes)
+        self._validate_line_up(self.players, line_up)
+    
+    def _validate_line_up(self, players: pd.DataFrame, line_up: str):
+        """Validate a player list against a line-up.
+
+        Args:
+            players: players to consider.
+            line_up: line-up type.
+        
+        Raises:
+            UnsupportedLineUp: the line-up requested is not supported.
+        """
         if line_up not in LINE_UP_FACTORY:
             raise UnsupportedLineUp(line_up)
         else:
-            self.line_up = LINE_UP_FACTORY[line_up]
-        # validate list of players against the line-ip
-        for position_name, count in self.players.groupby(
+            line_up = LINE_UP_FACTORY[line_up]
+        for position_name, count in players.groupby(
             "position_name"
         ).size().to_dict().items():
-            if getattr(self.line_up, POSITION_NAMES_TO_ATTRIBUTES[position_name]) != count:
+            if getattr(line_up, POSITION_NAMES_TO_ATTRIBUTES[position_name]) != count:
                 raise InvalidTeamLineup(
                     f"{count} {POSITION_NAMES_TO_ATTRIBUTES[position_name]}(s) "
                     f"not compatible with {line_up}"
@@ -87,7 +98,9 @@ class Team:
             float: points for the team.
         """
         all_players = Player.from_list_to_df(players)
-        all_players_with_points = all_players["points"] > 0.0
+        all_players_with_valid_points = (
+            (all_players["points"] >= POINTS_THRESHOLD) | (all_players["minutes"] >= MINUTES_THRESHOLD)
+        )
         # candidate players
         playing_players = all_players[
             all_players["_id"].isin(self.players["_id"])
@@ -101,49 +114,49 @@ class Team:
         logger.debug(f"Playing players: {playing_players}")
         # substitutes (preserve bench order)
         substitutes = all_players[
-            all_players_with_points & all_players["_id"].isin(self.substitutes["_id"])
+            all_players_with_valid_points & all_players["_id"].isin(self.substitutes["_id"])
         ]
         logger.debug(f"Potential substitutes: {substitutes}")
-        # sort substitutes by order
+        # sort substitutes by order on the bench
         substitutes.index = substitutes["_id"]
         substitutes = substitutes.reindex(self.substitutes["_id"]).dropna()
         logger.debug(f"Reordered substitutes: {substitutes}")
         if not substitutes.empty:
-            # replace the worst candidate players one by one
+            # sort for ascending points the candidates
             candidates_for_substitution = playing_players[
                 (playing_players["points"] == 0.0) | (
                     (playing_players["points"] < POINTS_THRESHOLD) & (playing_players["minutes"] < MINUTES_THRESHOLD)
                 )
-            ]
+            ].sort_values(by="points")[:MAX_SUBSTITUTIONS]
             logger.debug(f"Candidates for substitution: {candidates_for_substitution}")
-            to_be_substituted_ids: List[str] = []
-            substitutes_ids: List[str] = []
+            substitutes = substitutes[:candidates_for_substitution.shape[0]]
+            logger.debug(f"Potential replacements: {substitutes}")
+            to_be_substituted_ids: List[str] = candidates_for_substitution["_id"].tolist()
+            substitutes_ids: List[str] = substitutes["_id"].tolist()
             captain_substitute_id: str = ''
-            for _, player in candidates_for_substitution.iterrows():
-                logger.debug(f"Attempting to substitute: {player}")
-                substitutes_per_position = substitutes[
-                    (substitutes["position_name"] == player["position_name"])
-                    & ~substitutes["_id"].isin(substitutes_ids)
-                ]
-                logger.debug(f"Potentential substitutes in the position: {substitutes_per_position}")
-                if not substitutes_per_position.empty:
-                    logger.debug("Performing substitution")
-                    to_be_substituted_ids.append(player["_id"])
-                    current_substitute_id = substitutes_per_position.iloc[0]["_id"]
-                    substitutes_ids.append(current_substitute_id)
-                    if player["captain"]:
-                        logger.warning("Substitution of the captain")
-                        captain_substitute_id = current_substitute_id
-                    logger.debug(f"To be substituted: {to_be_substituted_ids}")
-                    logger.debug(f"Substitutes: {substitutes_ids}")
-                if len(to_be_substituted_ids) == MAX_SUBSTITUTIONS:
-                    logger.info("Reached maxiumum substitutions limit")
+            # TODO: handle the captain
+            # NOTE: try to find a match between the line-ups and the substitutes configuration
+            line_up_found: bool = False
+            for index in range(len(substitutes_ids)):
+                if line_up_found:
                     break
-            # get the final list
-            playing_players = pd.concat([
-                playing_players[~playing_players["_id"].isin(to_be_substituted_ids)],
-                substitutes[substitutes["_id"].isin(substitutes_ids)]
-            ], axis=0).copy()
+                merge_index = len(substitutes_ids) - index
+                candidate_playing_players = pd.concat([
+                    playing_players[~playing_players["_id"].isin(to_be_substituted_ids[:merge_index])],
+                    substitutes[substitutes["_id"].isin(substitutes_ids[:merge_index])]
+                ], axis=0)
+                logger.debug(f"Candidate line-up with {merge_index} substitution/s: {candidate_playing_players}")
+                # probing line-ups from the most to the least offensive
+                for line_up in SORTED_LINE_UPS:
+                    try:
+                        self._validate_line_up(candidate_playing_players, line_up)
+                        playing_players = candidate_playing_players.copy()
+                        # found the proper line-up
+                        logger.info(f"{line_up} is valid for: {candidate_playing_players}")
+                        line_up_found = True
+                        break
+                    except InvalidTeamLineup:
+                        logger.debug(f"{line_up} is invalid for: {candidate_playing_players}")
             if len(captain_substitute_id):
                 playing_players.loc[:, "captain"] = (playing_players["_id"] == captain_substitute_id)
             logger.info(f"Final list: {playing_players}")
