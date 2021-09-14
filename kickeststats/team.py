@@ -62,28 +62,28 @@ class Team:
         self.players = Player.from_list_to_df(players)
         self.substitutes = Player.from_list_to_df(substitutes)
         self._validate_line_up(self.players, line_up)
-    
+
     def _validate_line_up(self, players: pd.DataFrame, line_up: str):
         """Validate a player list against a line-up.
 
         Args:
             players: players to consider.
             line_up: line-up type.
-        
+
         Raises:
             UnsupportedLineUp: the line-up requested is not supported.
         """
         if line_up not in LINE_UP_FACTORY:
             raise UnsupportedLineUp(line_up)
         else:
-            line_up = LINE_UP_FACTORY[line_up]
+            line_up_object = LINE_UP_FACTORY[line_up]
         for position_name, count in players.groupby(
             "position_name"
         ).size().to_dict().items():
-            if getattr(line_up, POSITION_NAMES_TO_ATTRIBUTES[position_name]) != count:
+            if getattr(line_up_object, POSITION_NAMES_TO_ATTRIBUTES[position_name]) != count:
                 raise InvalidTeamLineup(
                     f"{count} {POSITION_NAMES_TO_ATTRIBUTES[position_name]}(s) "
-                    f"not compatible with {line_up}"
+                    f"not compatible with {line_up_object}"
                 )
 
     def points(self, players: List[Player], is_away: bool = True) -> float:
@@ -134,16 +134,33 @@ class Team:
             to_be_substituted_ids: List[str] = candidates_for_substitution["_id"].tolist()
             substitutes_ids: List[str] = substitutes["_id"].tolist()
             captain_substitute_id: str = ''
-            # TODO: handle the captain
-            # NOTE: try to find a match between the line-ups and the substitutes configuration
+            # try to find a match between the line-ups and the substitutes configuration
             line_up_found: bool = False
             for index in range(len(substitutes_ids)):
                 if line_up_found:
                     break
                 merge_index = len(substitutes_ids) - index
+                candidate_to_be_substituted_ids = to_be_substituted_ids[:merge_index]
+                candidate_substitutes_ids = substitutes_ids[:merge_index]
+                # handling captain
+                candidate_captain_substitute_id = ""
+                try:
+                    # first check if the captain needs substitution
+                    captain_relative_index = candidate_to_be_substituted_ids.index(captain_id)
+                    try:
+                        # pick the matching substitute in the list
+                        candidate_captain_substitute_id = candidate_substitutes_ids[captain_relative_index]
+                    except IndexError:
+                        logger.debug(
+                            "Mismatching indexes between to be substituted than actual substitutes, "
+                            "picking the first as captain"
+                        )
+                        candidate_captain_substitute_id = candidate_substitutes_ids[0]
+                except ValueError:
+                    logger.debug("Substitution is not about the captain")
                 candidate_playing_players = pd.concat([
-                    playing_players[~playing_players["_id"].isin(to_be_substituted_ids[:merge_index])],
-                    substitutes[substitutes["_id"].isin(substitutes_ids[:merge_index])]
+                    playing_players[~playing_players["_id"].isin(candidate_to_be_substituted_ids)],
+                    substitutes[substitutes["_id"].isin(candidate_substitutes_ids)]
                 ], axis=0)
                 logger.debug(f"Candidate line-up with {merge_index} substitution/s: {candidate_playing_players}")
                 # probing line-ups from the most to the least offensive
@@ -153,6 +170,8 @@ class Team:
                         playing_players = candidate_playing_players.copy()
                         # found the proper line-up
                         logger.info(f"{line_up} is valid for: {candidate_playing_players}")
+                        if len(candidate_captain_substitute_id):
+                            captain_substitute_id = candidate_captain_substitute_id
                         line_up_found = True
                         break
                     except InvalidTeamLineup:

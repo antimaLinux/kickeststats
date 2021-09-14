@@ -87,8 +87,8 @@ def test_team_points():
     assert team.points(PLAYERS, is_away=False) == 6.0
     # a realistic test case
     team = Team(players=TEAM_PLAYERS, substitutes=TEAM_SUBSTITUTES, line_up="4-4-2")
-    assert team.points(PLAYERS_TEST_CASE) == 167.3
-    assert team.points(PLAYERS_TEST_CASE, is_away=False) == 173.3
+    assert team.points(PLAYERS_TEST_CASE) == 163.1
+    assert team.points(PLAYERS_TEST_CASE, is_away=False) == 169.1
 
 
 def test_points_to_goals():
