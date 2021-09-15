@@ -133,6 +133,13 @@ class Team:
             if remove_goalkeeper_from_substitutes:
                 logger.debug("Optionally removing goalkeeper from substitutes")
                 substitutes = substitutes[~(substitutes["position_name"] == "GOALKEEPER")]
+            else:
+                # we make sure that the goalkeeper gets replaced first in case of need
+                substitutes = pd.concat(
+                    substitutes[substitutes["position_name"] == "GOALKEEPER"].iloc[0],
+                    substitutes[~(substitutes["position_name"] == "GOALKEEPER")]
+                )
+                logger.debug(f"Making sure goalkeeper is substituted first: {substitutes}")
             substitutes = substitutes[:candidates_for_substitution.shape[0]]
             logger.debug(f"Potential replacements: {substitutes}")
             to_be_substituted_ids: List[str] = candidates_for_substitution["_id"].tolist()
