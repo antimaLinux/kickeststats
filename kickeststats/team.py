@@ -129,6 +129,10 @@ class Team:
                 )
             ].sort_values(by="points")[:MAX_SUBSTITUTIONS]
             logger.debug(f"Candidates for substitution: {candidates_for_substitution}")
+            remove_goalkeeper_from_substitutes = "GOALKEEPER" not in set(candidates_for_substitution["position_name"])
+            if remove_goalkeeper_from_substitutes:
+                logger.debug("Optionally removing goalkeeper from substitutes")
+                substitutes = substitutes[~(substitutes["position_name"] == "GOALKEEPER")]
             substitutes = substitutes[:candidates_for_substitution.shape[0]]
             logger.debug(f"Potential replacements: {substitutes}")
             to_be_substituted_ids: List[str] = candidates_for_substitution["_id"].tolist()
