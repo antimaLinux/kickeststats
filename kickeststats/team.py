@@ -136,7 +136,7 @@ class Team:
             else:
                 # we make sure that the goalkeeper gets replaced first in case of need
                 substitutes = pd.concat([
-                    substitutes[substitutes["position_name"] == "GOALKEEPER"].iloc[0],
+                    substitutes[substitutes["position_name"] == "GOALKEEPER"][:1],
                     substitutes[~(substitutes["position_name"] == "GOALKEEPER")]
                 ])
                 logger.debug(f"Making sure goalkeeper is substituted first: {substitutes}")
