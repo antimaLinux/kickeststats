@@ -16,7 +16,9 @@ class InvalidLineUp(Exception):
 
 class UnsupportedLineUp(Exception):
     def __init__(self, line_up_name: str) -> None:
-        super(UnsupportedLineUp, self).__init__(f"Line-up [{line_up_name}] is not supported.")
+        super(UnsupportedLineUp, self).__init__(
+            f"Line-up [{line_up_name}] is not supported."
+        )
 
 
 class InvalidTeamLineup(Exception):

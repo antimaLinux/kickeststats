@@ -4,8 +4,7 @@ from .player import Position
 
 
 POSITION_NAMES_TO_ATTRIBUTES = {
-    position.name: position.name.lower()
-    for position in Position
+    position.name: position.name.lower() for position in Position
 }
 
 
@@ -24,9 +23,7 @@ class LineUp:
 
     def _valid(self) -> bool:
         """Check if the line-up is valid."""
-        return (
-            self.goalkeeper + self.defender + self.midfielder + self.forward
-        ) == 11
+        return (self.goalkeeper + self.defender + self.midfielder + self.forward) == 11
 
     def __post_init__(self) -> None:
         """
@@ -118,3 +115,18 @@ SORTED_LINE_UPS = [
     "4-5-1",
     "5-4-1",
 ]
+
+POSITION_LIMITS = {
+    "Por": 1,
+    "Dif": 5,
+    "Cen": 5,
+    "Att": 3,
+    Position.GOALKEEPER: 1,
+    Position.DEFENDER: 5,
+    Position.MIDFIELDER: 5,
+    Position.FORWARD: 3,
+    "GOALKEEPER": 1,
+    "DEFENDER": 5,
+    "MIDFIELDER": 5,
+    "FORWARD": 3,
+}

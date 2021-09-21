@@ -5,9 +5,7 @@ from .exceptions import EnvVariableNotSet
 
 CHROMEDRIVER_EXECUTABLE_PATH = os.environ.get(
     "CHROMEDRIVER_EXECUTABLE_PATH",
-    pkg_resources.resource_filename(
-        "kickeststats", "resources/drivers/chromedriver"
-    )
+    pkg_resources.resource_filename("kickeststats", "resources/drivers/chromedriver"),
 )
 
 if not CHROMEDRIVER_EXECUTABLE_PATH:

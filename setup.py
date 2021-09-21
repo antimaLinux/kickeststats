@@ -5,10 +5,10 @@ from setuptools import setup, find_packages
 
 __version__ = re.search(
     r'__version__\s*=\s*[\'"]([^\'"]*)[\'"]',
-    io.open("kickeststats/__init__.py", encoding="utf_8_sig").read()
+    io.open("kickeststats/__init__.py", encoding="utf_8_sig").read(),
 ).group(1)
 
-REQUIRED = [req.strip() for req in open('requirements.txt').readlines()]
+REQUIRED = [req.strip() for req in open("requirements.txt").readlines()]
 
 setup(
     name="kickeststats",
@@ -21,9 +21,9 @@ setup(
             "py.typed",
             "resources/tests/players.jsonl",
             "resources/tests/players_test_case.jsonl",
-            "resources/drivers/chromedriver"
+            "resources/drivers/chromedriver",
         ]
     },
     install_requires=REQUIRED,
-    scripts=["bin/kickeststats-download-data"]
+    scripts=["bin/kickeststats-download-data"],
 )

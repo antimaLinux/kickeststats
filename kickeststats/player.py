@@ -22,7 +22,7 @@ PLAYER_DICTIONARY_KEYS_MAPPING = {
     "value": {"CR", "value"},
     "team": {"Squadra", "team"},
     "points": {"PTS", "points"},
-    "minutes": {"Minuti", "minutes"}
+    "minutes": {"Minuti", "minutes"},
 }
 
 # NOTE: supporting multiple languages.
@@ -38,7 +38,7 @@ POSITION_MAPPINGS = {
     "GOALKEEPER": Position.GOALKEEPER,
     "DEFENDER": Position.DEFENDER,
     "MIDFIELDER": Position.MIDFIELDER,
-    "FORWARD": Position.FORWARD
+    "FORWARD": Position.FORWARD,
 }
 
 PLAYER_NAME_FN: Callable[[Any], str] = str.__call__
@@ -53,7 +53,7 @@ PLAYER_DICTIONARY_KEYS_FORMATTER_FN = {
     "team": TEAM_FN,
     "value": PLAYER_VALUE_FN,
     "points": PLAYER_POINTS_FN,
-    "minutes": PLAYER_MINUTES_FN
+    "minutes": PLAYER_MINUTES_FN,
 }
 
 
@@ -86,9 +86,9 @@ class Player:
             try:
                 mapped_argument = next(iter(keys & player_dictionary_keys))
                 mapped_value = player_dictionary[mapped_argument]
-                player_init_kwargs[argument] = (
-                    PLAYER_DICTIONARY_KEYS_FORMATTER_FN[argument](mapped_value)
-                )
+                player_init_kwargs[argument] = PLAYER_DICTIONARY_KEYS_FORMATTER_FN[
+                    argument
+                ](mapped_value)
             except StopIteration:
                 continue
         return Player(**player_init_kwargs)
@@ -127,15 +127,25 @@ class Player:
         players_df = pd.DataFrame(
             players,
             columns=[
-                "name", "position", "team", "captain", "value",
-                "points", "minutes", "position_name", "position_value", "_id"
-            ]
+                "name",
+                "position",
+                "team",
+                "captain",
+                "value",
+                "points",
+                "minutes",
+                "position_name",
+                "position_value",
+                "_id",
+            ],
         )
         if not players_df.empty:
-            players_df["position_name"], players_df["position_value"] = zip(*[
-                (position.name, position.value)
-                for position in players_df["position"]
-            ])
+            players_df["position_name"], players_df["position_value"] = zip(
+                *[
+                    (position.name, position.value)
+                    for position in players_df["position"]
+                ]
+            )
             players_df["_id"] = [
                 hashlib.md5(
                     f"{row['name']}{row['position_name']}{row['team']}".encode()
