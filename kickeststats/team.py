@@ -179,7 +179,7 @@ class Team:
                     ]
                 else:
                     logger.debug(
-                        f"Removing redundant substitutes for position: {position_name}"
+                        f"Removing {position_delta} redundant substitutes for position: {position_name}"
                     )
                     current_position = substitutes["position_name"] == position_name
                     other_positions = ~current_position
@@ -189,6 +189,7 @@ class Team:
                         )
                         | other_positions
                     ]
+                logger.debug(f"Substitute list after processing {position_name}: {substitutes}")
             # NOTE: final list of substitutes
             substitutes = substitutes[: candidates_for_substitution.shape[0]]
             logger.debug(f"Potential replacements: {substitutes}")
