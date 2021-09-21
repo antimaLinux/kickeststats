@@ -20,4 +20,4 @@ benchmark       = True
 # W503 line break occurred before a binary operator (badly implemented, doesn't allow log operators within brackets)
 
 
-ignore = E114,E116,E203,E221,E222,E241,E251,E272,E722,E731,W503
+ignore = E114,E116,E203,E221,E222,E241,E251,E272,E722,E731,W503,C901

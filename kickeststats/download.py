@@ -101,7 +101,10 @@ def download_data(match_day: Optional[int] = None) -> List[dict]:
         List[dict]: list of player statistics.
     """
     with Browser(
-        driver_name="chrome", executable_path=CHROMEDRIVER_EXECUTABLE_PATH, headless=True, incognito=True
+        driver_name="chrome",
+        executable_path=CHROMEDRIVER_EXECUTABLE_PATH,
+        headless=True,
+        incognito=True,
     ) as browser:
         players_data = []
         url = KICKEST_URL
