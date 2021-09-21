@@ -184,7 +184,8 @@ class Team:
                 else:
                     if position_minimum_delta > 0:
                         logger.debug(
-                            f"Giving priority to at least {position_minimum_delta} substitutes for position: {position_name}"
+                            f"Giving priority to at least {position_minimum_delta} "
+                            f"substitutes for position: {position_name}"
                         )
                         priority_slicing = substitutes["_id"].isin(
                             substitutes[substitutes["position_name"] == position_name][
