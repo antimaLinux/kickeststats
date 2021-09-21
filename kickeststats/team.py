@@ -12,6 +12,7 @@ from .line_up import (
     POSITION_NAMES_TO_ATTRIBUTES,
     SORTED_LINE_UPS,
     POSITION_MAXIMUM,
+    POSITION_MINIMUM,
 )
 
 MAX_SUBSTITUTIONS = int(os.environ.get("KICKESTSTATS_MAX_SUBSTITUTIONS", 5))
@@ -167,10 +168,13 @@ class Team:
             ]
             position_counts = Counter(players_not_substituted["position_name"])
             for position_name in ["DEFENDER", "MIDFIELDER", "FORWARD"]:
-                position_delta = (
+                position_maximum_delta = (
                     POSITION_MAXIMUM[position_name] - position_counts[position_name]
                 )
-                if position_delta <= 0:
+                position_minimum_delta = (
+                    POSITION_MINIMUM[position_name] - position_counts[position_name]
+                )
+                if position_maximum_delta <= 0:
                     logger.debug(
                         f"Reached limit for postion: {position_name}, adjusting substitutes"
                     )
@@ -178,18 +182,37 @@ class Team:
                         ~(substitutes["position_name"] == position_name)
                     ]
                 else:
+                    if position_minimum_delta > 0:
+                        logger.debug(
+                            f"Giving priority to at least {position_minimum_delta} substitutes for position: {position_name}"
+                        )
+                        priority_slicing = substitutes["_id"].isin(
+                            substitutes[substitutes["position_name"] == position_name][
+                                :position_minimum_delta
+                            ]["_id"]
+                        )
+                        substitutes = pd.concat(
+                            [
+                                substitutes[priority_slicing],
+                                substitutes[~priority_slicing],
+                            ]
+                        )
                     logger.debug(
-                        f"Removing {position_delta} redundant substitutes for position: {position_name}"
+                        f"Keeping at most {position_maximum_delta} substitutes for position: {position_name}"
                     )
                     current_position = substitutes["position_name"] == position_name
                     other_positions = ~current_position
                     substitutes = substitutes[
                         substitutes["_id"].isin(
-                            substitutes[current_position][:position_delta]["_id"]
+                            substitutes[current_position][:position_maximum_delta][
+                                "_id"
+                            ]
                         )
                         | other_positions
                     ]
-                logger.debug(f"Substitute list after processing {position_name}: {substitutes}")
+                logger.debug(
+                    f"Substitute list after processing {position_name}: {substitutes}"
+                )
             # NOTE: final list of substitutes
             substitutes = substitutes[: candidates_for_substitution.shape[0]]
             logger.debug(f"Potential replacements: {substitutes}")
