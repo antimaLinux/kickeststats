@@ -11,7 +11,7 @@ from .line_up import (
     LINE_UP_FACTORY,
     POSITION_NAMES_TO_ATTRIBUTES,
     SORTED_LINE_UPS,
-    POSITION_LIMITS,
+    POSITION_MAXIMUM,
 )
 
 MAX_SUBSTITUTIONS = int(os.environ.get("KICKESTSTATS_MAX_SUBSTITUTIONS", 5))
@@ -167,12 +167,27 @@ class Team:
             ]
             position_counts = Counter(players_not_substituted["position_name"])
             for position_name in ["DEFENDER", "MIDFIELDER", "FORWARD"]:
-                if position_counts[position_name] >= POSITION_LIMITS[position_name]:
+                position_delta = (
+                    POSITION_MAXIMUM[position_name] - position_counts[position_name]
+                )
+                if position_delta <= 0:
                     logger.debug(
                         f"Reached limit for postion: {position_name}, adjusting substitutes"
                     )
                     substitutes = substitutes[
                         ~(substitutes["position_name"] == position_name)
+                    ]
+                else:
+                    logger.debug(
+                        f"Removing redundant substitutes for position: {position_name}"
+                    )
+                    current_position = substitutes["position_name"] == position_name
+                    other_positions = ~current_position
+                    substitutes = substitutes[
+                        substitutes["_id"].isin(
+                            substitutes[current_position][:position_delta]["_id"]
+                        )
+                        | other_positions
                     ]
             # NOTE: final list of substitutes
             substitutes = substitutes[: candidates_for_substitution.shape[0]]

@@ -116,7 +116,7 @@ SORTED_LINE_UPS = [
     "5-4-1",
 ]
 
-POSITION_LIMITS = {
+POSITION_MAXIMUM = {
     "Por": 1,
     "Dif": 5,
     "Cen": 5,
@@ -129,4 +129,19 @@ POSITION_LIMITS = {
     "DEFENDER": 5,
     "MIDFIELDER": 5,
     "FORWARD": 3,
+}
+
+POSITION_MINIMUM = {
+    "Por": 1,
+    "Dif": 3,
+    "Cen": 3,
+    "Att": 1,
+    Position.GOALKEEPER: 1,
+    Position.DEFENDER: 3,
+    Position.MIDFIELDER: 3,
+    Position.FORWARD: 1,
+    "GOALKEEPER": 1,
+    "DEFENDER": 3,
+    "MIDFIELDER": 3,
+    "FORWARD": 1,
 }
