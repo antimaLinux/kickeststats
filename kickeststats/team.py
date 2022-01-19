@@ -238,16 +238,22 @@ class Team:
                     captain_relative_index = candidate_to_be_substituted_ids.index(
                         captain_id
                     )
-                    logger.info(captain_relative_index, candidate_to_be_substituted_ids, candidate_substitutes_ids)
-                    try:
-                        # pick the matching substitute in the list
-                        candidate_captain_substitute_id = candidate_substitutes_ids[
-                            captain_relative_index
+                    captain_row = playing_players[
+                        playing_players["_id"] == captain_id
+                    ].iloc[0]
+                    captain_substitutes_with_same_position = substitutes[
+                        substitutes["_id"].isin(candidate_substitutes_ids)
+                        & (substitutes["position_name"] == captain_row["position_name"])
+                    ]
+                    if not captain_substitutes_with_same_position.empty:
+                        candidate_captain_substitute_id = captain_substitutes_with_same_position.iloc[
+                            0
+                        ][
+                            "_id"
                         ]
-                    except IndexError:
+                    else:
                         logger.debug(
-                            "Mismatching indexes between to be substituted than actual substitutes, "
-                            "picking the first as captain"
+                            "Could not replace the captain by position, picking the first substitute as captain"
                         )
                         candidate_captain_substitute_id = candidate_substitutes_ids[0]
                 except ValueError:
@@ -276,7 +282,10 @@ class Team:
                             f"{line_up} is valid for: {candidate_playing_players}"
                         )
                         if len(candidate_captain_substitute_id):
-                            captain_substitute_id = candidate_captain_substitute_id
+                            if line_up != self.line_up:  # use subsitute order
+                                captain_substitute_id = candidate_substitutes_ids[0]
+                            else:  # use the found id
+                                captain_substitute_id = candidate_captain_substitute_id
                         line_up_found = True
                         break
                     except InvalidTeamLineup:
