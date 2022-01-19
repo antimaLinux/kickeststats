@@ -68,6 +68,7 @@ class Team:
         """
         self.players = Player.from_list_to_df(players)
         self.substitutes = Player.from_list_to_df(substitutes)
+        self.line_up = line_up
         self._validate_line_up(self.players, line_up)
 
     def _validate_line_up(self, players: pd.DataFrame, line_up: str):
@@ -237,6 +238,7 @@ class Team:
                     captain_relative_index = candidate_to_be_substituted_ids.index(
                         captain_id
                     )
+                    logger.info(captain_relative_index, candidate_to_be_substituted_ids, candidate_substitutes_ids)
                     try:
                         # pick the matching substitute in the list
                         candidate_captain_substitute_id = candidate_substitutes_ids[
