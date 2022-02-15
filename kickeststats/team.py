@@ -92,9 +92,9 @@ class Team:
                 getattr(line_up_object, POSITION_NAMES_TO_ATTRIBUTES[position_name])
                 != count
             ):
-                raise InvalidTeamLineup(
+                logger.debug(
                     f"{count} {POSITION_NAMES_TO_ATTRIBUTES[position_name]}(s) "
-                    f"not compatible with {line_up_object}"
+                    f"not compatible with {line_up_object}, substitutions will take place."
                 )
 
     def points(self, players: List[Player], is_away: bool = True) -> float:
