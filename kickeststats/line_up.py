@@ -1,7 +1,7 @@
 """Soccer line-up types."""
 from dataclasses import dataclass
-from .player import Position
 
+from .player import Position
 
 POSITION_NAMES_TO_ATTRIBUTES = {
     position.name: position.name.lower() for position in Position

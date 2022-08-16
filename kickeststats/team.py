@@ -1,19 +1,21 @@
 """Team utilities."""
 import os
+from collections import Counter
+from typing import List
+
 import numpy as np
 import pandas as pd
-from typing import List
 from loguru import logger
-from collections import Counter
-from .player import Player
-from .exceptions import UnsupportedLineUp, InvalidTeamLineup
+
+from .exceptions import InvalidTeamLineup, UnsupportedLineUp
 from .line_up import (
     LINE_UP_FACTORY,
-    POSITION_NAMES_TO_ATTRIBUTES,
-    SORTED_LINE_UPS,
     POSITION_MAXIMUM,
     POSITION_MINIMUM,
+    POSITION_NAMES_TO_ATTRIBUTES,
+    SORTED_LINE_UPS,
 )
+from .player import Player
 
 MAX_SUBSTITUTIONS = int(os.environ.get("KICKESTSTATS_MAX_SUBSTITUTIONS", 5))
 GOAL_THRESHOLD = float(os.environ.get("KICKESTSTATS_GOAL_THRESHOLD", 180))
@@ -234,10 +236,6 @@ class Team:
                 # handling captain
                 candidate_captain_substitute_id = ""
                 try:
-                    # first check if the captain needs substitution
-                    captain_relative_index = candidate_to_be_substituted_ids.index(
-                        captain_id
-                    )
                     captain_row = playing_players[
                         playing_players["_id"] == captain_id
                     ].iloc[0]
@@ -246,11 +244,9 @@ class Team:
                         & (substitutes["position_name"] == captain_row["position_name"])
                     ]
                     if not captain_substitutes_with_same_position.empty:
-                        candidate_captain_substitute_id = captain_substitutes_with_same_position.iloc[
-                            0
-                        ][
-                            "_id"
-                        ]
+                        candidate_captain_substitute_id = (
+                            captain_substitutes_with_same_position.iloc[0]["_id"]
+                        )
                     else:
                         logger.debug(
                             "Could not replace the captain by position, picking the first substitute as captain"

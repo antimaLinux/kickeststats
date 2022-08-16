@@ -1,12 +1,12 @@
 """Testing team utilities."""
-import pytest
-import pkg_resources
 import pandas as pd
+import pkg_resources
+import pytest
 from loguru import logger
-from kickeststats.player import Player, Position
-from kickeststats.team import Team, points_to_goals, GOAL_THRESHOLD, GOAL_GAP
-from kickeststats.exceptions import InvalidTeamLineup, UnsupportedLineUp
 
+from kickeststats.exceptions import InvalidTeamLineup, UnsupportedLineUp
+from kickeststats.player import Player, Position
+from kickeststats.team import GOAL_GAP, GOAL_THRESHOLD, Team, points_to_goals
 
 PLAYER_JSONL_FILEPATH = pkg_resources.resource_filename(
     "kickeststats", "resources/tests/players.jsonl"

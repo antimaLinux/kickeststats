@@ -1,9 +1,10 @@
 """Player utitlities."""
 import hashlib
-import pandas as pd
-from enum import Enum, auto
 from dataclasses import dataclass
-from typing import List, Callable, Any, Dict
+from enum import Enum, auto
+from typing import Any, Callable, Dict, List
+
+import pandas as pd
 
 
 class Position(Enum):
