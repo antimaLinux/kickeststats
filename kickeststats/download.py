@@ -1,11 +1,15 @@
-from splinter import Browser  # type: ignore
-from splinter.driver.webdriver.chrome import WebDriver as ChromeWebDriver  # type: ignore
-from splinter.driver.webdriver import WebDriverElement  # type: ignore
-from typing import List, Optional
-from loguru import logger
 import time
-from .helpers.parsers import HeaderParser, RowParser, PaginationParser
-from .constants import KICKEST_URL, CHROMEDRIVER_EXECUTABLE_PATH
+from typing import List, Optional
+
+from loguru import logger
+from splinter import Browser  # type: ignore
+from splinter.driver.webdriver import WebDriverElement  # type: ignore
+from splinter.driver.webdriver.chrome import (
+    WebDriver as ChromeWebDriver,
+)  # type: ignore
+
+from .constants import CHROMEDRIVER_EXECUTABLE_PATH, KICKEST_URL
+from .helpers.parsers import HeaderParser, PaginationParser, RowParser
 
 
 class TableHeader:

@@ -15,6 +15,7 @@ install:
 
 script:
   - python3 -m pytest -sv --cov=kickeststats --cov-fail-under=50
+  - python3 -m black --check --diff --color kickeststats
   - python3 -m flake8 --disable-noqa kickeststats
   - mypy kickeststats --warn-unused-ignores
   # testing scripts installation

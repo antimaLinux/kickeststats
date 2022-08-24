@@ -3,6 +3,13 @@
 
 Kickscraper is a tool to extract players scores from kickest platform.
 
+## requirements
+
+The package is tested only with the following python versions:
+
+- 3.7
+- 3.8
+
 ## development
 
 Setup a `venv`:

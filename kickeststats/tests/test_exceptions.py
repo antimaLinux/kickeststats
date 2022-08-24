@@ -1,11 +1,12 @@
 """Testing exception utilities."""
 import pytest
+
 from ..exceptions import (
-    ParsingException,
     EnvVariableNotSet,
     InvalidLineUp,
-    UnsupportedLineUp,
     InvalidTeamLineup,
+    ParsingException,
+    UnsupportedLineUp,
 )
 
 
