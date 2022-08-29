@@ -242,7 +242,7 @@ class Team:
             )
             substitutes["sorter"] = substitutes["_id"].map(sorter)
             substitutes = substitutes.sort_values(by="sorting")
-            substitutes.drop("sorting", axis=1)
+            substitutes.drop("sorter", axis=1)
             logger.debug(f"Potential replacements: {substitutes}")
             to_be_substituted_ids: List[str] = candidates_for_substitution[
                 "_id"
