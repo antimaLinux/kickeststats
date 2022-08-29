@@ -143,8 +143,12 @@ class Team:
                     (playing_players["points"] < POINTS_THRESHOLD)
                     & (playing_players["minutes"] < MINUTES_THRESHOLD)
                 )
-            ].sort_values(by=["captain", "points"], ascending=[False, True])[:MAX_SUBSTITUTIONS]
-            captain_to_be_substituted = captain_id in set(candidates_for_substitution["_id"].tolist())
+            ].sort_values(by=["captain", "points"], ascending=[False, True])[
+                :MAX_SUBSTITUTIONS
+            ]
+            captain_to_be_substituted = captain_id in set(
+                candidates_for_substitution["_id"].tolist()
+            )
             logger.debug(f"Candidates for substitution: {candidates_for_substitution}")
             # NOTE: handling the goalkeeper
             remove_goalkeeper_from_substitutes = "GOALKEEPER" not in set(
@@ -171,7 +175,15 @@ class Team:
                 ~playing_players["_id"].isin(candidates_for_substitution["_id"])
             ]
             position_counts = Counter(players_not_substituted["position_name"])
-            for position_name in ["DEFENDER", "MIDFIELDER", "FORWARD"]:
+            # NOTE: sort them following the bench
+            ordered_position_names = [
+                position_name
+                for position_name in dict.fromkeys(
+                    substitutes["position_name"].tolist()
+                )
+                if position_name in {"DEFENDER", "MIDFIELDER", "FORWARD"}
+            ]
+            for position_name in ordered_position_names:
                 position_maximum_delta = (
                     POSITION_MAXIMUM[position_name] - position_counts[position_name]
                 )
