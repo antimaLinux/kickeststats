@@ -143,7 +143,7 @@ class Team:
                     (playing_players["points"] < POINTS_THRESHOLD)
                     & (playing_players["minutes"] < MINUTES_THRESHOLD)
                 )
-            ].sort_values(by="points")[:MAX_SUBSTITUTIONS]
+            ].sort_values(by=["captain", "points"])[:MAX_SUBSTITUTIONS]
             captain_to_be_substituted = captain_id in set(candidates_for_substitution["_id"].tolist())
             logger.debug(f"Candidates for substitution: {candidates_for_substitution}")
             # NOTE: handling the goalkeeper
