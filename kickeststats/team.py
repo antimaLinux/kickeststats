@@ -139,8 +139,7 @@ class Team:
         if not substitutes.empty:
             # get and sort for ascending points the candidates
             candidates_for_substitution = playing_players[
-                (playing_players["points"] == 0.0)
-                | (
+                (
                     (playing_players["points"] < POINTS_THRESHOLD)
                     & (playing_players["minutes"] < MINUTES_THRESHOLD)
                 )
@@ -238,10 +237,6 @@ class Team:
                 # handling captain
                 candidate_captain_substitute_id = ""
                 try:
-                    # # first check if the captain needs substitution
-                    # captain_relative_index = candidate_to_be_substituted_ids.index(
-                    #     captain_id
-                    # )
                     captain_row = playing_players[
                         playing_players["_id"] == captain_id
                     ].iloc[0]
