@@ -137,13 +137,13 @@ class Team:
         substitutes = substitutes.reindex(self.substitutes["_id"]).dropna()
         logger.debug(f"Reordered substitutes: {substitutes}")
         if not substitutes.empty:
-            # get and sort for ascending points the candidates
+            # get and sort for ascending points the candidates (we keep captain first to make sure that if needed, it's substituted)
             candidates_for_substitution = playing_players[
                 (
                     (playing_players["points"] < POINTS_THRESHOLD)
                     & (playing_players["minutes"] < MINUTES_THRESHOLD)
                 )
-            ].sort_values(by=["captain", "points"])[:MAX_SUBSTITUTIONS]
+            ].sort_values(by=["captain", "points"], ascending=[False, True])[:MAX_SUBSTITUTIONS]
             captain_to_be_substituted = captain_id in set(candidates_for_substitution["_id"].tolist())
             logger.debug(f"Candidates for substitution: {candidates_for_substitution}")
             # NOTE: handling the goalkeeper
