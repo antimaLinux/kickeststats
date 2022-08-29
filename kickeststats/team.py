@@ -136,6 +136,7 @@ class Team:
         substitutes.index = substitutes["_id"]
         substitutes = substitutes.reindex(self.substitutes["_id"]).dropna()
         logger.debug(f"Reordered substitutes: {substitutes}")
+        ordered_substitutes_ids_from_bench = substitutes["_id"].tolist()
         if not substitutes.empty:
             # get and sort for ascending points the candidates (we keep captain first to make sure that if needed, it's substituted)
             candidates_for_substitution = playing_players[
@@ -232,6 +233,16 @@ class Team:
                 )
             # NOTE: final list of substitutes
             substitutes = substitutes[: candidates_for_substitution.shape[0]]
+            # NOTE: now we make sure we follow the order of the bench respecting min-max priorities per position
+            sorter = dict(
+                zip(
+                    ordered_substitutes_ids_from_bench,
+                    range(len(ordered_substitutes_ids_from_bench)),
+                )
+            )
+            substitutes["sorter"] = substitutes["_id"].map(sorter)
+            substitutes = substitutes.sort_values(by="sorting")
+            substitutes.drop("sorting", axis=1)
             logger.debug(f"Potential replacements: {substitutes}")
             to_be_substituted_ids: List[str] = candidates_for_substitution[
                 "_id"
