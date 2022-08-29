@@ -237,6 +237,10 @@ class Team:
                 # handling captain
                 candidate_captain_substitute_id = ""
                 try:
+                    # # first check if the captain needs substitution
+                    # captain_relative_index = candidate_to_be_substituted_ids.index(
+                    #     captain_id
+                    # )
                     captain_row = playing_players[
                         playing_players["_id"] == captain_id
                     ].iloc[0]
