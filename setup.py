@@ -25,5 +25,5 @@ setup(
         ]
     },
     install_requires=REQUIRED,
-    scripts=["bin/kickeststats-download-data"],
+    scripts=["bin/kickeststats-download-data", "bin/kickeststats-jsonl-to-csv"],
 )

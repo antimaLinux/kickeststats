@@ -144,6 +144,7 @@ class Team:
                     & (playing_players["minutes"] < MINUTES_THRESHOLD)
                 )
             ].sort_values(by="points")[:MAX_SUBSTITUTIONS]
+            captain_to_be_substituted = captain_id in set(candidates_for_substitution["_id"].tolist())
             logger.debug(f"Candidates for substitution: {candidates_for_substitution}")
             # NOTE: handling the goalkeeper
             remove_goalkeeper_from_substitutes = "GOALKEEPER" not in set(
@@ -288,7 +289,7 @@ class Team:
                         logger.debug(
                             f"{line_up} is invalid for: {candidate_playing_players}"
                         )
-            if len(captain_substitute_id):
+            if len(captain_substitute_id) and captain_to_be_substituted:
                 playing_players.loc[:, "captain"] = (
                     playing_players["_id"] == captain_substitute_id
                 )

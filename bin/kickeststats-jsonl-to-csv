@@ -1,0 +1,31 @@
+#! /usr/bin/env python3
+"""Convert a JSONL players file to .csv"""
+import os
+import json
+import argparse
+from kickeststats.player import Player
+
+parser = argparse.ArgumentParser(
+    description="Convert a JSONL players file to a .csv."
+)
+parser.add_argument(
+    "players_jsonl_filepath",
+    type=str,
+    help=("path to the .jsonl with the downloaded data."),
+)
+parser.add_argument(
+    "csv_filepath",
+    type=str,
+    help=("path to the .jsonl with the downloaded data."),
+)
+
+
+if __name__ == "__main__":
+    # parse arguments
+    args = parser.parse_args()
+    # read players data
+    players = Player.from_jsonl(args.players_jsonl_filepath)
+    players_df = Player.from_list_to_df(players)
+    # dump them
+    players_df.to_csv(args.csv_filepath)
+
