@@ -1,6 +1,7 @@
 """Team utilities."""
 import os
 from collections import Counter
+from random import random
 from typing import List
 
 import numpy as np
@@ -122,7 +123,7 @@ class Team:
             captain_id = self.players[self.players["captain"]].iloc[0]["_id"]
         else:
             logger.warning("Captain not provided picking a random one")
-            captain_id = self.players.sample(1).iloc[0]["_id"]
+            captain_id = self.players.sample(1, random_state=42).iloc[0]["_id"]
         playing_players.loc[:, "captain"] = playing_players["_id"] == captain_id
         logger.debug(f"Playing players: {playing_players}")
         # substitutes (preserve bench order)
