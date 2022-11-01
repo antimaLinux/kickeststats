@@ -37,7 +37,7 @@ def points_to_goals(points: float) -> int:
     """
     goals = 0
     threshold = GOAL_THRESHOLD
-    while points > threshold:
+    while points >= threshold:
         goals += 1
         threshold += GOAL_GAP
     return goals
