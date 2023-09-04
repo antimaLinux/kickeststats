@@ -23,6 +23,8 @@ GOAL_THRESHOLD = float(os.environ.get("KICKESTSTATS_GOAL_THRESHOLD", 180))
 GOAL_GAP = float(os.environ.get("KICKESTSTATS_GOAL_GAP", 20))
 MINUTES_THRESHOLD = float(os.environ.get("KICKESTSTATS_MINUTES_THRESHOLD", 15))
 POINTS_THRESHOLD = float(os.environ.get("KICKESTSTATS_POINTS_THRESHOLD", 15))
+HOME_BONUS = float(os.environ.get("KICKESTSTATS_HOME_BONUS", 6))
+CAPTAIN_MODIFIER = float(os.environ.get("KICKESTSTATS_CAPTAIN_MODIFIER", 1.5))
 
 
 def points_to_goals(points: float) -> int:
@@ -318,7 +320,7 @@ class Team:
                 )
             logger.info(f"Final list: {playing_players}")
         # compute the points
-        points = 0.0 if is_away else 6.0
+        points = 0.0 if is_away else HOME_BONUS
         for _, player in playing_players.iterrows():
-            points += 2 * player["points"] if player["captain"] else player["points"]
+            points += CAPTAIN_MODIFIER * player["points"] if player["captain"] else player["points"]
         return np.round(points, 2)
