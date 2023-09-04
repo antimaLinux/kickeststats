@@ -233,6 +233,8 @@ class Team:
                 logger.debug(
                     f"Substitute list after processing {position_name}: {substitutes}"
                 )
+            # NOTE: this could be enabled to help boost points
+            # substitutes = substitutes.sort_values(by="points", ascending=False)
             # NOTE: final list of substitutes
             substitutes = substitutes[: candidates_for_substitution.shape[0]]
             # NOTE: now we make sure we follow the order of the bench respecting min-max priorities per position
