@@ -19,7 +19,7 @@ from .line_up import (
 from .player import Player
 
 MAX_SUBSTITUTIONS = int(os.environ.get("KICKESTSTATS_MAX_SUBSTITUTIONS", 5))
-GOAL_THRESHOLD = float(os.environ.get("KICKESTSTATS_GOAL_THRESHOLD", 180))
+GOAL_THRESHOLD = float(os.environ.get("KICKESTSTATS_GOAL_THRESHOLD", 160))
 GOAL_GAP = float(os.environ.get("KICKESTSTATS_GOAL_GAP", 20))
 MINUTES_THRESHOLD = float(os.environ.get("KICKESTSTATS_MINUTES_THRESHOLD", 15))
 POINTS_THRESHOLD = float(os.environ.get("KICKESTSTATS_POINTS_THRESHOLD", 15))
