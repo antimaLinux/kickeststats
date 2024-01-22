@@ -1,7 +1,6 @@
 """Team utilities."""
 import os
 from collections import Counter
-from random import random
 from typing import List
 
 import numpy as np
@@ -140,7 +139,8 @@ class Team:
         logger.debug(f"Reordered substitutes: {substitutes}")
         ordered_substitutes_ids_from_bench = substitutes["_id"].tolist()
         if not substitutes.empty:
-            # get and sort for ascending points the candidates (we keep captain first to make sure that if needed, it's substituted)
+            # get and sort for ascending points the candidates
+            # (we keep captain first to make sure that if needed, it's substituted)
             candidates_for_substitution = playing_players[
                 (
                     (playing_players["points"] < POINTS_THRESHOLD)
@@ -324,5 +324,9 @@ class Team:
         # compute the points
         points = 0.0 if is_away else HOME_BONUS
         for _, player in playing_players.iterrows():
-            points += CAPTAIN_MODIFIER * player["points"] if player["captain"] else player["points"]
+            points += (
+                CAPTAIN_MODIFIER * player["points"]
+                if player["captain"]
+                else player["points"]
+            )
         return np.round(points, 2)

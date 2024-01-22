@@ -93,13 +93,17 @@ class NextPage:
         self._next.click()
 
 
-def download_data(match_day: Optional[int] = None) -> List[dict]:
+def download_data(
+    match_day: Optional[int] = None, raw_query: Optional[str] = None
+) -> List[dict]:
     """
     Download data for a given match day.
 
     Args:
         match_day (int): day of the match. Default to None, download
             non specific day.
+        raw_query (str): pass a raw query. Default to None, no raw query.
+            It by-passes match day.
 
     Returns:
         List[dict]: list of player statistics.
@@ -114,6 +118,8 @@ def download_data(match_day: Optional[int] = None) -> List[dict]:
         url = KICKEST_URL
         if match_day is not None:
             url = f"{KICKEST_URL}&matchdays={match_day}"
+        if raw_query is not None:
+            url = f"{KICKEST_URL}&{raw_query}"
         logger.info(f"Downloading data from {url}")
         browser.visit(url)
         # required sleep due to interaction with webdriver

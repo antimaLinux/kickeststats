@@ -23,13 +23,19 @@ parser.add_argument(
     default=None,
     help=("match day. Defaults to non specific match day data."),
 )
-
+parser.add_argument(
+    "-r",
+    "--raw_query",
+    type=str,
+    default=None,
+    help=("raw query to apply. Defaults to no query."),
+)
 
 if __name__ == "__main__":
     # parse arguments
     args = parser.parse_args()
     # download player data
-    players = download_data(match_day=args.match_day)
+    players = download_data(match_day=args.match_day, raw_query=args.raw_query)
     # dump them
     with open(args.players_jsonl_filepath, "wt") as fp:
         fp.writelines([f"{json.dumps(player)}{os.linesep}" for player in players])
