@@ -110,7 +110,6 @@ def download_data(
     """
     with Browser(
         driver_name="chrome",
-        executable_path=CHROMEDRIVER_EXECUTABLE_PATH,
         headless=True,
         incognito=True,
     ) as browser:
