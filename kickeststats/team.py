@@ -163,6 +163,15 @@ class Team:
                     ~(substitutes["position_name"] == "GOALKEEPER")
                 ]
             else:
+                # we check whether we have at least a goalkeeper to substitute otherwise we do
+                # not replace the original goalkeeper
+                if substitutes[substitutes["position_name"] == "GOALKEEPER"].shape[0] < 1:
+                    candidates_for_substitution.drop(
+                        candidates_for_substitution[
+                            candidates_for_substitution["position_name"] == "GOALKEEPER"
+                        ].index,
+                        inplace=True
+                    )
                 # we make sure that the goalkeeper gets replaced first in case of need
                 substitutes = pd.concat(
                     [
